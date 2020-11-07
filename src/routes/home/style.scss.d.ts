@@ -2,9 +2,11 @@
 declare namespace StyleScssNamespace {
   export interface IStyleScss {
     addInputWrapper: string;
+    filterWrapper: string;
     todo: string;
     todoList: string;
     todoListItem: string;
+    todoListItemCompleted: string;
   }
 }
 

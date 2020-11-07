@@ -3,6 +3,7 @@ declare namespace StyleScssNamespace {
   export interface IStyleScss {
     todoActions: string;
     todoText: string;
+    todoTextCompleted: string;
   }
 }
 

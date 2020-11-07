@@ -10,28 +10,55 @@ interface Props {
   user: string;
 }
 
-type TodoItem = { id: string; text: string; isEditing: boolean };
+type TodoItem = {
+  id: string;
+  text: string;
+  isEditing: boolean;
+  isCompleted: boolean;
+};
+
+type Filters = "all" | "done" | "undone";
 
 const initialState: TodoItem[] = [
   {
     id: "1",
     text: "Some todo 1",
-    isEditing: false
+    isEditing: false,
+    isCompleted: false
   },
   {
     id: "2",
     text: "Some todo 2",
-    isEditing: false
+    isEditing: false,
+    isCompleted: true
+  },
+  {
+    id: "3",
+    text: "Some todo 3",
+    isEditing: false,
+    isCompleted: false
   }
 ];
 
 const Home: FunctionalComponent<Props> = () => {
   const [todoInSearch, setTodoInSearch] = useState<string>("");
-  const [todos, setTodos] = useState<TodoItem[]>([]);
+  const [todos, setTodos] = useState<TodoItem[]>(initialState);
+  const [todosToShow, setTodosToShow] = useState<TodoItem[]>(todos);
+  const [activeFilter, setActiveFilter] = useState<Filters>("all");
 
   useEffect(() => {
-    setTodos(initialState);
-  }, []);
+    switch (activeFilter) {
+      case "all":
+        setTodosToShow(todos);
+        break;
+      case "done":
+        setTodosToShow(todos.filter(todo => Boolean(todo.isCompleted)));
+        break;
+      case "undone":
+        setTodosToShow(todos.filter(todo => todo.isCompleted === false));
+        break;
+    }
+  }, [activeFilter, todos]);
 
   const onInputNewTodo = ({
     currentTarget
@@ -41,10 +68,16 @@ const Home: FunctionalComponent<Props> = () => {
 
   const onAddNewTodo = () => {
     setTodos(prev => [
-      { id: String(Date.now()), text: todoInSearch, isEditing: false },
+      {
+        id: String(Date.now()),
+        text: todoInSearch,
+        isEditing: false,
+        isCompleted: false
+      },
       ...prev
     ]);
     setTodoInSearch("");
+    setActiveFilter("all");
   };
 
   const onDeleteTodo = (id: string) => {
@@ -77,6 +110,14 @@ const Home: FunctionalComponent<Props> = () => {
     );
   };
 
+  const onToggleCompleted = (id: string) => {
+    setTodos(prev =>
+      prev.map(todo =>
+        todo.id === id ? { ...todo, isCompleted: !todo.isCompleted } : todo
+      )
+    );
+  };
+
   return (
     <div class={style.todo}>
       <div class={style.addInputWrapper}>
@@ -90,9 +131,20 @@ const Home: FunctionalComponent<Props> = () => {
           Add todo
         </button>
       </div>
+
+      <div class={style.filterWrapper}>
+        <button onClick={() => setActiveFilter("all")}>All</button>
+        <button onClick={() => setActiveFilter("done")}>Done</button>
+        <button onClick={() => setActiveFilter("undone")}>Undone</button>
+      </div>
+
       <ul class={style.todoList}>
-        {todos.map(({ id, text, isEditing }) => (
-          <li class={style.todoListItem}>
+        {todosToShow.map(({ id, text, isEditing, isCompleted }) => (
+          <li
+            class={`${style.todoListItem} ${
+              isCompleted ? style.todoListItemCompleted : ""
+            }`}
+          >
             {isEditing ? (
               <EditedTodoItem
                 id={id}
@@ -102,6 +154,8 @@ const Home: FunctionalComponent<Props> = () => {
               />
             ) : (
               <TodoItem
+                onToggleCompleted={onToggleCompleted}
+                isCompleted={isCompleted}
                 id={id}
                 text={text}
                 onDeleteTodo={onDeleteTodo}
