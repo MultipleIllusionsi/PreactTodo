@@ -49,12 +49,17 @@
     width: 33.3%;
     text-align: center;
     border: 1px solid #cacaca;
+    font-weight: 700;
     padding: 10px;
     font-size: 16px;
-    transition: 0.3s all ease-out;
+    transition: 0.3s hover ease-out;
+
+    &.active {
+      background: rgb(202, 201, 201) !important;
+    }
 
     &:hover {
-      background: rgb(216, 216, 216);
+      background: rgb(226, 226, 226);
     }
   }
 }

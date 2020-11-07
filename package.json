@@ -23,15 +23,13 @@
     "build/*"
   ],
   "dependencies": {
-    "@preact-hooks/unistore": "^1.1.2",
     "node-sass": "^5.0.0",
     "preact": "^10.3.1",
     "preact-jsx-chai": "^3.0.0",
     "preact-markup": "^2.0.0",
     "preact-render-to-string": "^5.1.4",
     "preact-router": "^3.2.1",
-    "sass-loader": "^10.0.5",
-    "unistore": "^3.5.2"
+    "sass-loader": "^10.0.5"
   },
   "devDependencies": {
     "@teamsupercell/typings-for-css-modules-loader": "^2.2.0",

@@ -1,5 +1,6 @@
 import { FunctionalComponent, h, JSX } from "preact";
 import { useEffect, useState } from "preact/hooks";
+import { useTodos } from "../../components/context";
 
 import EditedTodoItem from "../../components/EditedTodoItem";
 import TodoItem from "../../components/TodoItem";
@@ -10,7 +11,7 @@ interface Props {
   user: string;
 }
 
-type TodoItem = {
+export type TodoItem = {
   id: string;
   text: string;
   isEditing: boolean;
@@ -19,30 +20,18 @@ type TodoItem = {
 
 type Filters = "all" | "done" | "undone";
 
-const initialState: TodoItem[] = [
-  {
-    id: "1",
-    text: "Some todo 1",
-    isEditing: false,
-    isCompleted: false
-  },
-  {
-    id: "2",
-    text: "Some todo 2",
-    isEditing: false,
-    isCompleted: true
-  },
-  {
-    id: "3",
-    text: "Some todo 3",
-    isEditing: false,
-    isCompleted: false
-  }
-];
-
 const Home: FunctionalComponent<Props> = () => {
+  const {
+    todos,
+    setTodos,
+    onDeleteTodo,
+    onEditTodo,
+    onSaveEditing,
+    onDiscardEditing,
+    onToggleCompleted
+  } = useTodos();
+
   const [todoInSearch, setTodoInSearch] = useState<string>("");
-  const [todos, setTodos] = useState<TodoItem[]>(initialState);
   const [todosToShow, setTodosToShow] = useState<TodoItem[]>(todos);
   const [activeFilter, setActiveFilter] = useState<Filters>("all");
 
@@ -80,43 +69,8 @@ const Home: FunctionalComponent<Props> = () => {
     setActiveFilter("all");
   };
 
-  const onDeleteTodo = (id: string) => {
-    setTodos(prev => prev.filter(todo => todo.id !== id));
-  };
-
-  const onEditTodo = (id: string) => {
-    setTodos(prev =>
-      prev.map(todo =>
-        todo.id === id
-          ? { ...todo, isEditing: !todo.isEditing }
-          : { ...todo, isEditing: false }
-      )
-    );
-  };
-
-  const onSaveEditing = (id: string, value: string) => {
-    setTodos(prev =>
-      prev.map(todo =>
-        todo.id === id ? { ...todo, text: value, isEditing: false } : todo
-      )
-    );
-  };
-
-  const onDiscardEditing = (id: string) => {
-    setTodos(prev =>
-      prev.map(todo =>
-        todo.id === id ? { ...todo, isEditing: !todo.isEditing } : todo
-      )
-    );
-  };
-
-  const onToggleCompleted = (id: string) => {
-    setTodos(prev =>
-      prev.map(todo =>
-        todo.id === id ? { ...todo, isCompleted: !todo.isCompleted } : todo
-      )
-    );
-  };
+  const isActive = (filter: Filters) =>
+    activeFilter === filter ? style.active : "";
 
   return (
     <div class={style.todo}>
@@ -133,9 +87,21 @@ const Home: FunctionalComponent<Props> = () => {
       </div>
 
       <div class={style.filterWrapper}>
-        <button onClick={() => setActiveFilter("all")}>All</button>
-        <button onClick={() => setActiveFilter("done")}>Done</button>
-        <button onClick={() => setActiveFilter("undone")}>Undone</button>
+        <button class={isActive("all")} onClick={() => setActiveFilter("all")}>
+          All
+        </button>
+        <button
+          class={isActive("done")}
+          onClick={() => setActiveFilter("done")}
+        >
+          Done
+        </button>
+        <button
+          class={isActive("undone")}
+          onClick={() => setActiveFilter("undone")}
+        >
+          Undone
+        </button>
       </div>
 
       <ul class={style.todoList}>

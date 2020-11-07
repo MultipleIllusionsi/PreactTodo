@@ -4,6 +4,7 @@ import { Route, Router, RouterOnChangeArgs } from "preact-router";
 import Home from "../routes/home";
 import ListPage from "../routes/ListPage";
 import NotFoundPage from "../routes/notfound";
+import TodosProvider from "./context";
 import Header from "./header";
 
 const App: FunctionalComponent = () => {
@@ -14,12 +15,14 @@ const App: FunctionalComponent = () => {
 
   return (
     <div id="app">
-      <Header />
-      <Router onChange={handleRoute}>
-        <Route path="/" component={Home} />
-        <Route path="/list" component={ListPage} />
-        <NotFoundPage default />
-      </Router>
+      <TodosProvider>
+        <Header />
+        <Router onChange={handleRoute}>
+          <Route path="/" component={Home} />
+          <Route path="/list" component={ListPage} />
+          <NotFoundPage default />
+        </Router>
+      </TodosProvider>
     </div>
   );
 };
